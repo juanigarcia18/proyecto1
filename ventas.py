@@ -5,7 +5,7 @@ import json
 class Venta:
     IVA = 0.16
     IGTF = 0.03
-    def __init__(self, cliente, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2):
+    def __init__(self, cliente, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2, total):
         self.cliente = cliente
         self.productos = productos
         self.cantidad = cantidad
@@ -14,6 +14,7 @@ class Venta:
         self.fecha = fecha
         self.cliente_tipo = cliente_tipo
         self.pago2 = pago2
+        self.total = total
     
 
 class GestionVentas:
@@ -37,9 +38,7 @@ class GestionVentas:
         except FileNotFoundError:
             self.ventas = []
 
-    def registrar_venta(self, cliente_documento, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2):
-        venta = Venta(cliente_documento, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2)
-        nombre_cliente = self.gestion_clientes.buscar_nombre_cliente_por_documento(cliente_documento)
+    def calcular_subtotal(self, productos, cantidad, pago, cliente_tipo, pago2):
         nombres_productos = productos.split(',')
         subtotal = 0
         for nombre_producto in nombres_productos:
@@ -53,7 +52,31 @@ class GestionVentas:
         iva = subtotal * 0.16
         igtf = subtotal * 0.03 if pago in ['zelle', 'cash'] else 0
         total = subtotal - descuento + iva + igtf
+
+        return subtotal
+
+
+
+    def calcular_total(self, pago, cliente_tipo, pago2, subtotal):
+
+        descuento = subtotal * 0.05 if cliente_tipo == 'juridico' and pago2 == 's' else 0
+        iva = subtotal * 0.16
+        igtf = subtotal * 0.03 if pago in ['zelle', 'cash'] else 0
+        total = subtotal - descuento + iva + igtf
+
+        return total
+    
+    
+    
+    def registrar_venta(self, cliente_documento, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2, total, subtotal):
+        venta = Venta(cliente_documento, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2, total)
+        nombre_cliente = self.gestion_clientes.buscar_nombre_cliente_por_documento(cliente_documento)
+        descuento = subtotal * 0.05 if cliente_tipo == 'juridico' and pago2 == 's' else 0
+        iva = subtotal * 0.16
+        igtf = subtotal * 0.03 if pago in ['zelle', 'cash'] else 0
+        
         self.ventas.append({
+            'venta' : venta,
             'cliente': nombre_cliente,
             'documento': cliente_documento,
             'productos': productos,

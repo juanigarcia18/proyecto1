@@ -10,6 +10,7 @@ import random
 
 def main():
 
+
     gestion_productos = GestionProductos()
 
     if os.path.isfile('productos.json'):
@@ -97,7 +98,7 @@ def main():
                             for cliente in clientes_encontrados:
                                 print(cliente)  
                         else:
-                            print("No se encontró ningun cliente con el correo proporcionado")
+                            print("No se encontro ningun cliente con el correo proporcionado")
                 
                 # Imprimir lista de clientes en un txt
                 elif opcion_cliente == "1.3":
@@ -207,7 +208,7 @@ def main():
                 
 
         
-      # REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR  
+        # REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR  
         
         elif opcion == "3":
 
@@ -240,27 +241,29 @@ def main():
                         fecha = input("Ingrese la fecha en formato dd/mm/aaaa: ")
                         productos = input("Ingrese el/los productos comprados separado por comas: ")
                         cantidad = input("Ingrese la cantidad de cada uno separado por comas: ")
-                        print("Métodos de pago disponibles: Zelle, Cash, PM, PdV")
+                        print("Metodos de pago disponibles: Zelle, Cash, PM, PdV")
                         pago = input("Ingrese su método de pago: ").lower()
                         pago2 = input("Ingrese si pagó de contado (s/n): ").lower()
                         print("Métodos de envío disponibles: MRW, Zoom, Delivery")
                         envio = input("Ingrese su método de envío: ")
-
-                        gestion_ventas.registrar_venta(cliente_documento, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2)
+                        
+                        subtotal = gestion_ventas.calcular_subtotal(productos, cantidad, pago, cliente_tipo, pago2)
+                        total = gestion_ventas.calcular_total(pago, cliente_tipo, pago2, subtotal)
+                        gestion_ventas.registrar_venta(cliente_documento, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2, total, subtotal)
                         gestion_ventas.guardar_ventas()
                         print("Venta registrada con éxito")
                     else:
                         print("No se encontro ningun cliente con el documento proporcionado")
                         continue
             
-
+                # ARREGLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
                 elif opcion_venta == "3.2":
                     # Opciones de búsqueda
                     print("Seleccione el criterio de búsqueda:")
                     print("3.2.1 Cliente")
                     print("3.2.2 Fecha")
                     print("3.2.3 Monto")
-                    opcion_busqueda = input("Ingrese la opción de búsqueda: ")
+                    opcion_busqueda = input("Ingrese la opción de bUsqueda: ")
 
                     if opcion_busqueda == "3.2.1":
                         # Búsqueda por cliente
@@ -277,7 +280,7 @@ def main():
                         monto_max = float(input("Ingrese el monto máximo del rango: "))
                         ventas_encontradas = gestion_ventas.buscar_ventas(rango_monto=(monto_min, monto_max))
                     else:
-                        print("Opción inválida")
+                        print("Opción invalida")
                         continue
 
                     if len(ventas_encontradas) > 0:
@@ -329,10 +332,21 @@ def main():
                     opcion_pago = input("\nSeleccione una opcion: ")
                     
                 if opcion_pago == "4.1":
-                    cliente = input("Ingrese el nombre del cliente: ")
-                    monto = input("Ingrese el monto del pago: ")
-                    moneda = input("Ingrese la moneda con la que pago: ")
-                    tipo = input("Ingrese el tipo de pago (PdV, PM, Zelle, Cash): ")
+                    cliente_documento = input("Ingrese el documento del cliente: ").lower()
+                    cliente = gestion_ventas.buscar_venta_por_cliente(cliente_documento)
+                    cliente = cliente['cliente'] # devuelve el documento relacionado a la venta
+                    
+                    monto = gestion_ventas.buscar_venta_por_cliente(cliente_documento)
+                    monto = monto['total'] # devuelve el total de la venta
+                    
+                    moneda = gestion_ventas.buscar_venta_por_cliente(cliente_documento)
+                    moneda = moneda['pago']
+                    if moneda in ["zelle", "cash"] :
+                        moneda = "dolar"
+                    else :
+                        moneda = "bolivares"
+                    tipo = gestion_ventas.buscar_venta_por_cliente(cliente_documento)
+                    tipo = tipo['pago']
                     fecha = input("Ingrese la fecha del pago (dd/mm/aaaa): ")
                     gestion_pagos.registrar_pago(cliente, monto, moneda, tipo, fecha)
             

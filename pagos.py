@@ -1,3 +1,5 @@
+import json
+
 class Pago:
     def __init__(self, cliente, monto, moneda, tipo, fecha):
         self.cliente = cliente
@@ -16,6 +18,7 @@ class GestionPagos:
     def registrar_pago(self, cliente, monto, moneda, tipo, fecha):
         pago = Pago(cliente, monto, moneda, tipo, fecha)
         self.pagos.append(pago)
+        self.guardar_pagos_json()
 
     def buscar_pago(self, cliente=None, fecha=None, tipo=None, moneda=None):
         resultados = []
@@ -30,8 +33,8 @@ class GestionPagos:
         pago = Pago(cliente, monto, moneda, tipo, fecha)
         self.pagos.append(pago)
     
-    def guardar_pagos_txt(self):
-        with open('pagos.txt', 'w') as f:
-            for pago in self.pagos:
-                f.write(f'{pago.cliente.id},{pago.monto},{pago.moneda},{pago.tipo},{pago.fecha}\n')
+    def guardar_pagos_json(self):
+        pagos_dict = [vars(pago) for pago in self.pagos]
+        with open("envios.json", 'w') as f:
+            json.dump(pagos_dict, f)
 
