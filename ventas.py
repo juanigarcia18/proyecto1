@@ -1,5 +1,6 @@
 from productos import GestionProductos
-
+from clientes import GestionClientes
+import json
 
 class Venta:
     IVA = 0.16
@@ -13,20 +14,32 @@ class Venta:
         self.fecha = fecha
         self.cliente_tipo = cliente_tipo
         self.pago2 = pago2
+    
 
 class GestionVentas:
     def __init__(self):
         self.ventas = []
         self.gestion_productos = GestionProductos()
+        self.gestion_clientes = GestionClientes()
+        self.cargar_ventas()
 
-    # REVISAR ESTOOOOOO NO PONER ID y no se si esto hace falta
-    def guardar_ventas_txt(self):
-        with open('ventas.txt', 'w') as f:
-            for venta in self.ventas:
-                f.write(f'{venta.id},{venta.cliente.id},{[producto.id for producto in venta.productos]}\n')
-                        
-    def registrar_venta(self, cliente, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2):
-        venta = Venta(cliente, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2)
+    # Arreglar el print 
+    def guardar_ventas(self):
+        ventas_guardar = [vars(venta['venta']) for venta in self.ventas]
+        with open('ventas.json', 'w') as f:
+            json.dump(ventas_guardar, f, indent=4)
+
+    def cargar_ventas(self):
+        try:
+            with open('ventas.json', 'r') as f:
+                ventas_cargadas = json.load(f)
+                self.ventas = [{'venta': Venta(**venta), **venta} for venta in ventas_cargadas]
+        except FileNotFoundError:
+            self.ventas = []
+
+    def registrar_venta(self, cliente_documento, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2):
+        venta = Venta(cliente_documento, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2)
+        nombre_cliente = self.gestion_clientes.buscar_nombre_cliente_por_documento(cliente_documento)
         nombres_productos = productos.split(',')
         subtotal = 0
         for nombre_producto in nombres_productos:
@@ -41,7 +54,12 @@ class GestionVentas:
         igtf = subtotal * 0.03 if pago in ['zelle', 'cash'] else 0
         total = subtotal - descuento + iva + igtf
         self.ventas.append({
-            'venta': venta,
+            'cliente': nombre_cliente,
+            'documento': cliente_documento,
+            'productos': productos,
+            'cantidad': cantidad,
+            'pago': pago,
+            'envio': envio,
             'subtotal': subtotal,
             'descuento': descuento,
             'iva': iva,
@@ -50,8 +68,8 @@ class GestionVentas:
             'fecha': fecha
         })
 
-        print("Venta registrada:")
-        print("Cliente:", cliente)
+        print("\nVenta registrada:\n")
+        print("Cliente:", nombre_cliente + ", documento:", cliente_documento)
         print("Productos:", productos)
         print("Cantidad:", cantidad)
         print("Pago:", pago)
@@ -63,7 +81,8 @@ class GestionVentas:
         print("Total:", total)
 
         return {
-            'cliente': cliente,
+            'cliente': nombre_cliente,
+            'documento': cliente_documento,
             'productos': productos,
             'cantidad': cantidad,
             'pago': pago,
@@ -76,16 +95,26 @@ class GestionVentas:
         }
 
     # ARREGLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
-    def buscar_ventas(self, cliente=None, productos=None, cantidad=None, pago=None, envio=None):
+    def buscar_ventas(self, cliente=None, fecha=None, total=None):
         ventas_encontradas = []
         for venta in self.ventas:
-            if (cliente is None or venta.cliente == cliente) and \
-               (productos is None or venta.productos == productos) and \
-               (cantidad is None or venta.cantidad == cantidad) and \
-               (pago is None or venta.pago == pago) and \
-               (envio is None or venta.envio == envio):
+            venta_info = venta['venta']
+            if (cliente is None or venta_info.cliente == cliente) and \
+               (fecha is None or venta_info.fecha == fecha) and \
+               (total is None or venta['total'] == total):
                 ventas_encontradas.append(venta)
+
         return ventas_encontradas
     
-   
-    # FALTA GENERAR FACTURAS EN TXT O JSON
+    def buscar_venta_por_cliente(self, cliente_documento):
+        for venta in self.ventas:
+            if venta['venta'].cliente == cliente_documento:
+                return venta
+        return None
+    
+    def buscar_envio_por_documento(self, cliente_documento):
+        for venta in self.ventas:
+            if venta['venta'].cliente == cliente_documento:
+                return venta['venta'].envio
+
+        return None

@@ -5,6 +5,7 @@ from pagos import GestionPagos
 from envios import GestionEnvios
 from estadisticas import Estadisticas
 import os
+import random
 
 
 def main():
@@ -65,9 +66,9 @@ def main():
                     # Validacion
                     while tipo_cliente.lower() not in ["natural", "juridico"] :
                         print("Error, debe ser natural o juridico")
-                        tipo_cliente = input("Ingrese el tipo de cliente (natural/juridico): ")
+                        tipo_cliente = input("Ingrese el tipo de cliente (natural/juridico): ").lower()
                                              
-                    documento = input("Ingrese su documento (cedula/rif): ")
+                    documento = input("Ingrese su documento (cedula/rif): ").lower()
                     correo = input("Ingrese su correo: ")
                     direccion = input("Ingrese su direccion de envio:")
                     telefono = input("Ingrese su numero de telefono: ")
@@ -81,7 +82,7 @@ def main():
                     opcion2 = input("1.2.1 Buscar por documento (cedula/rif)\n1.2.2 Buscar por correo\nOpcion: ")
 
                     if opcion2 == "1.2.1":
-                        documento = input("Ingrese el documento del cliente a buscar: ")
+                        documento = input("Ingrese el documento del cliente a buscar: ").lower()
                         clientes_encontrados = gestion_clientes.buscar_cliente(documento=documento)
                         if clientes_encontrados:
                             for cliente in clientes_encontrados:
@@ -101,7 +102,7 @@ def main():
                 # Imprimir lista de clientes en un txt
                 elif opcion_cliente == "1.3":
                     
-                    gestion_clientes.guardar_clientes_txt()
+                    gestion_clientes.guardar_clientes()
 
 
                 # volver al menu anterior
@@ -214,54 +215,96 @@ def main():
                 print("\n=====Gestion de Ventas=====\n")
                 print("3.1 Registrar venta")
                 print("3.2 Buscar venta")
-                print("3.3 Volver")
+                print("3.3 Generar Factura")
+                print("3.4 Volver")
                 opcion_venta = input("\nSeleccione una opción: ")
 
                 # Validacion
-                while opcion_venta not in ["3.1", "3.2", "3.3"]:
+                while opcion_venta not in ["3.1", "3.2", "3.3", "3.4"]:
                     print("\nOpcion no valida\n\n=====Gestion de Ventas=====\n\n3.1 Registrar venta")
                     print("3.2 Buscar venta")
-                    print("3.3 Volver")
+                    print("3.3 Generar Factura")
+                    print("3.4 Volver")
                     opcion_venta = input("\nSeleccione una opcion: ")
 
                 if opcion_venta == "3.1":
                     # Registrar venta
-                    cliente = input("Ingrese el nombre del cliente: ")
-                    cliente_tipo = input("Ingrese si el cliente es natural o juridico: ").lower()
-                    fecha = input("Ingrese la fecha en formato dd/mm/aaaa: ")
-                    productos = input("Ingrese el/los productos comprados separado por comas: ")
-                    # REVISAR
-                    cantidad = input("Ingrese la cantidad de cada uno separado por comas: ")
-                    print("metodos de pago disponibles: Zelle, Cash, PM, PdV")
-                    pago = input("Ingrese su metodo de pago: ").lower() # Método de pago
-                    pago2 = input("Ingrese si pago de contado (s/n)").lower()
-                    print("metodos de envio disponibles: MRW, Zoom, Delivery")
-                    envio = input("Ingrese su metodo de envio: ")  # Método de envío
+                    documento = input("Ingrese el documento del cliente: ").lower()
+                    clientes_encontrados = gestion_clientes.buscar_cliente(documento=documento)
 
-                    gestion_ventas.registrar_venta(cliente, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2)
-                    print("Venta registrada con exito")
+                    if clientes_encontrados:
+                        cliente = clientes_encontrados[0]  # Tomar el primer cliente encontrado
+                        cliente_tipo = cliente.tipo_cliente
+                        cliente_documento = cliente.documento
+
+                        fecha = input("Ingrese la fecha en formato dd/mm/aaaa: ")
+                        productos = input("Ingrese el/los productos comprados separado por comas: ")
+                        cantidad = input("Ingrese la cantidad de cada uno separado por comas: ")
+                        print("Métodos de pago disponibles: Zelle, Cash, PM, PdV")
+                        pago = input("Ingrese su método de pago: ").lower()
+                        pago2 = input("Ingrese si pagó de contado (s/n): ").lower()
+                        print("Métodos de envío disponibles: MRW, Zoom, Delivery")
+                        envio = input("Ingrese su método de envío: ")
+
+                        gestion_ventas.registrar_venta(cliente_documento, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2)
+                        gestion_ventas.guardar_ventas()
+                        print("Venta registrada con éxito")
+                    else:
+                        print("No se encontro ningun cliente con el documento proporcionado")
+                        continue
             
-                # ARREGLAR
+
                 elif opcion_venta == "3.2":
-                    # Buscar venta
-                    cliente = input("Ingrese el nombre del cliente a buscar: ")
-                    ventas_encontradas = gestion_ventas.buscar_ventas(cliente=cliente)
+                    # Opciones de búsqueda
+                    print("Seleccione el criterio de búsqueda:")
+                    print("3.2.1 Cliente")
+                    print("3.2.2 Fecha")
+                    print("3.2.3 Monto")
+                    opcion_busqueda = input("Ingrese la opción de búsqueda: ")
+
+                    if opcion_busqueda == "3.2.1":
+                        # Búsqueda por cliente
+                        cliente_documento = input("Ingrese el documento del cliente a buscar: ")
+                        nombre_cliente = gestion_clientes.buscar_nombre_cliente_por_documento(cliente_documento)
+                        ventas_encontradas = gestion_ventas.buscar_ventas(cliente=cliente_documento)
+                    elif opcion_busqueda == "3.2.2":
+                        # Búsqueda por fecha
+                        fecha = input("Ingrese la fecha de la venta a buscar (dd/mm/aaaa): ")
+                        ventas_encontradas = gestion_ventas.buscar_ventas(fecha=fecha)
+                    elif opcion_busqueda == "3.2.3":
+                        # Búsqueda por rango de monto
+                        monto_min = float(input("Ingrese el monto mínimo del rango: "))
+                        monto_max = float(input("Ingrese el monto máximo del rango: "))
+                        ventas_encontradas = gestion_ventas.buscar_ventas(rango_monto=(monto_min, monto_max))
+                    else:
+                        print("Opción inválida")
+                        continue
 
                     if len(ventas_encontradas) > 0:
                         print("Ventas encontradas:")
-                        for venta in ventas_encontradas:
-                            print(f"Cliente: {venta.cliente}")
+                        for venta_info in ventas_encontradas:
+                            venta = venta_info['venta']
+                            print(f"Cliente: {venta.cliente}, {venta.cliente.documento}")
                             print("Productos:")
-                            for producto, cantidad in zip(venta.productos, venta.cantidad):
-                                print(f"  - Nombre: {producto.name}")
-                                print(f"    Descripción: {producto.description}")
-                                print(f"    Precio: {producto.price}")
-                                print(f"    Cantidad: {cantidad}")
-                            print(f"Monto total: {venta.get_monto_total()}")
+                            for producto, cantidad in zip(venta.productos.split(','), venta.cantidad.split(',')):
+                                producto_objeto = gestion_productos.buscar_producto(name=producto.strip())
+                                if producto_objeto:
+                                    print(f"  - Nombre: {producto_objeto.name}")
+                                    print(f"    Descripción: {producto_objeto.description}")
+                                    print(f"    Precio: {producto_objeto.price}")
+                                    print(f"    Cantidad: {cantidad}")
+                            print(f"Monto total: {venta_info['total']}")
                             print("------------------------")
-                
-                # volver al menu
+                    else:
+                        print("No se encontraron ventas que coincidan con los criterios de busqueda")
+
+
                 elif opcion_venta == "3.3":
+                    gestion_ventas.guardar_ventas()
+
+
+                # volver al menu
+                elif opcion_venta == "3.4":
                     break
 
 
@@ -340,7 +383,7 @@ def main():
                 elif opcion_pago == "4.3":
                     break
         
-        # Listo
+        # Listo todo
         elif opcion == "5":
 
             while True:
@@ -359,24 +402,30 @@ def main():
                     opcion_envio = input("\nSeleccione una opcion: ")
 
                 if opcion_envio == "5.1":
-                    cliente = input("Ingrese el nombre del cliente: ").lower()
-                    while not all(char.isalpha() or char.isspace() for char in cliente):
-                        cliente = input("Error\nIngrese el nombre del cliente: ").lower()
-                    order_compra = input("Ingrese el numero de orden de compra: ")
-                    while not order_compra.isnumeric() :
-                        order_compra = input("Error\nIngrese el numero de orden de compra: ")
-                    servicio = input("Ingrese el servicio de envio (MRW, Zoom, Delivery) : ").lower()
-                    while not servicio in ["mrw", "zoom", "delivery"] :
-                        servicio = input("Error\nIngrese el servicio de envio (MRW, Zoom, Delivery) : ").lower()
-                    if servicio.lower() == "delivery" :
-                        motorizado = input("Ingrese los datos del motorizado (nombre,telefono) :")
+                    cliente_documento = input("Ingrese el documento del cliente: ").lower()
+                    cliente = gestion_ventas.buscar_venta_por_cliente(cliente_documento)
+                    cliente = cliente['cliente']
+
+                    if cliente is None:
+                        print("No se encontro un registro de venta asociado al cliente")
                     
-                    direccion = input("Ingrese su direccion: ")
-                    costo = float(input("Ingrese el costo del servicio: "))
-                    fecha = input("Ingrese la fecha del envio (dd/mm/aaaa): ")
+                    direccion = gestion_clientes.buscar_direccion_por_documento(cliente_documento)
+
+                    order_compra = str(random.randint(1000, 9999))
+                    servicio = gestion_ventas.buscar_envio_por_documento(cliente_documento)
+
+                    if servicio == "delivery":
+                        motorizado = input("Ingrese los datos del motorizado (nombre, teléfono): ")
+                    else :
+                        motorizado = None
+
+                    costo = float(5 * random.randint(1, 4))
+                    # REVISAR
+                    fecha = input("Ingrese la fecha del envío (dd/mm/aaaa): ")
 
                     gestion_envios.registrar_envio(cliente, order_compra, servicio, costo, direccion, motorizado, fecha)
-                    print("Envio registrado exitosamente")
+                    print("Envío registrado exitosamente")
+
 
                 elif opcion_envio == "5.2":
                     opcion_envio2 = input("\n5.2.1 Buscar por cliente\n5.2.2 Buscar por fecha\nSeleccione una opcion: ")
@@ -385,7 +434,7 @@ def main():
                         opcion_envio2 = input("\nOpcion invalida.\n\n5.2.1 Buscar por cliente\n5.2.2 Buscar por fecha\nSeleccione una opcion valida: ")
 
                     if opcion_envio2 == "5.2.1":
-                        cliente = input("Ingrese el nombre del cliente a buscar: ")
+                        cliente = input("Ingrese el documento del cliente a buscar: ")
                         envios = gestion_envios.buscar_envios(cliente)
 
                         if envios:
@@ -449,10 +498,13 @@ def main():
         elif opcion == "7":
             if os.path.isfile('productos.json'):
                 os.remove('productos.json')
-                os.remove('clientes.txt')
+                os.remove('clientes.json')
                 os.remove('envios.json')
+                os.remove('ventas.json')
                 gestion_productos.productos.clear()
+                gestion_clientes.clientes.clear()
                 gestion_envios.envios.clear()
+                gestion_ventas.ventas.clear()
                 gestion_productos.obtener_productos_api()
                 gestion_productos.guardar_productos_json()
 

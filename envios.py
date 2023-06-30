@@ -45,3 +45,4 @@ class GestionEnvios:
                 envios_dict = json.load(f)
                 for envio in envios_dict:
                     self.registrar_envio(envio['cliente'],envio['order_compra'], envio['servicio'], envio['costo'], envio['direccion'], envio['motorizado'], envio['fecha'])
+
