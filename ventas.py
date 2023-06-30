@@ -1,12 +1,13 @@
 class Venta:
     iva = 0.16
     igtf = 0.03
-    def __init__(self, cliente, productos, cantidad, pago, envio):
+    def __init__(self, cliente, productos, cantidad, pago, envio, fecha):
         self.cliente = cliente
         self.productos = productos
         self.cantidad = cantidad
         self.pago = pago
         self.envio = envio
+        self.fecha = fecha
 
 class GestionVentas:
     def __init__(self):
@@ -18,14 +19,14 @@ class GestionVentas:
             for venta in self.ventas:
                 f.write(f'{venta.id},{venta.cliente.id},{[producto.id for producto in venta.productos]}\n')
                 
-    def registrar_venta(self, cliente, productos, cantidad, pago, envio):
+    def registrar_venta(self, cliente, productos, cantidad, pago, envio, fecha):
         venta = Venta(cliente, productos, cantidad, pago, envio)
         subtotal = sum(producto.price * cantidad for producto, cantidad in zip(self.productos, self.cantidad))
         descuento = subtotal * 0.05 if self.cliente.tipo == 'juridico' and self.pago == 'contado' else 0
         iva = subtotal * self.IVA
         igtf = subtotal * self.IGTF if self.pago == 'Zelle' or 'Cash' else 0
         total = subtotal - descuento + iva + igtf        
-        self.ventas.append(venta, subtotal, descuento, iva, igtf, total)
+        self.ventas.append(venta, subtotal, descuento, iva, igtf, total, fecha, total)
         return {
             'cliente' : cliente,
             'productos' : productos,

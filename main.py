@@ -226,6 +226,7 @@ def main():
                 if opcion_venta == "3.1":
                     # Registrar venta
                     cliente = input("Ingrese el nombre del cliente: ")
+                    fecha = input("Ingrese la fehcha en formato dd/mm/aaaa: ")
                     productos = input("Ingrese el/los productos comprados separado por comas: ")
                     cantidad = input("Ingrese la cantidad: ")
                     print("metodos de pago disponibles: Zelle, Cash, PM, PdV")
@@ -233,7 +234,7 @@ def main():
                     print("metodos de envio disponibles: MRW, Zoom, Delivery")
                     envio = input("Ingrese su metodo de envio: ")  # Método de envío
 
-                    gestion_ventas.registrar_venta(cliente, productos, cantidad, pago, envio)
+                    gestion_ventas.registrar_venta(cliente, productos, cantidad, pago, envio, fecha)
                     print("Venta registrada con exito")
             
             
