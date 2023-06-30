@@ -147,52 +147,86 @@ def main():
 
                 # FALTA BUSCAR PRODUCTOS TAMBIEN POR CATEGORIA PRECIO DISPONIBILIDAD
                 elif opcion_producto == "2.2":
-                    nombre = input("Ingrese el nombre del producto a buscar: ")
-                    productos_encontrados = gestion_productos.buscar_producto(name=nombre)
+                    # Opciones de búsqueda
+                    print("Seleccione el criterio de búsqueda:")
+                    print("2.2.1 Categoría")
+                    print("2.2.2 Precio")
+                    print("2.2.3 Nombre")
+                    print("2.2.4 Disponibilidad")
+                    opcion_busqueda = input("Ingrese la opción de búsqueda: ")
+
+                    while opcion_busqueda not in ["2.2.1", "2.2.2", "2.2.3", "2.2.4"]:
+                        print("Seleccione el criterio de busqueda:")
+                        print("2.2.1 Categoría")
+                        print("2.2.2 Precio")
+                        print("2.2.3 Nombre")
+                        print("2.2.4 Disponibilidad")
+                        opcion_busqueda = input("Ingrese la opción de busqueda: ")
+
+                    if opcion_busqueda == "2.2.1":
+                        # Búsqueda por categoria
+                        categoria = input("Ingrese la categoría del producto a buscar: ")
+                        productos_encontrados = gestion_productos.buscar_productos(categoria=categoria)
+                    elif opcion_busqueda == "2.2.2":
+                        # Busqueda por precio
+                        precio_min = float(input("Ingrese el precio mínimo: "))
+                        precio_max = float(input("Ingrese el precio máximo: "))
+                        productos_encontrados = gestion_productos.buscar_productos(precio_min=precio_min, precio_max=precio_max)
+                    elif opcion_busqueda == "2.2.3":
+                        # Búsqueda por nombre
+                        nombre = input("Ingrese el nombre del producto a buscar: ")
+                        productos_encontrados = gestion_productos.buscar_productos(nombre=nombre)
+                    elif opcion_busqueda == "2.2.4":
+                        # Búsqueda por disponibilidad
+                        disponibilidad = input("Desea buscar productos disponibles? (1. Si/2. No): ")
+                        disponibilidad = disponibilidad.lower() == "1"
+                        productos_encontrados = gestion_productos.buscar_productos(disponibilidad=disponibilidad)
+                    else:
+                        print("Opción inválida")
+                        continue
+
                     if productos_encontrados:
+                        print("Productos encontrados:")
                         for producto in productos_encontrados:
                             print(producto)
                     else:
-                        print("No se encontro ningun producto con el nombre proporcionado")
+                        print("No se encontraron productos que coincidan con los criterios de búsqueda")
+
                         
                 elif opcion_producto == "2.3":
                     nombre = input("Ingrese el nombre del producto a modificar: ")
-                    productos_encontrados = gestion_productos.buscar_producto(name=nombre)
                     
-                    if productos_encontrados:
-                        new_name = input("Ingrese el nuevo nombre del producto: ")
-                        new_description = input("Ingrese la nueva descripción del producto: ")
-                        
-                        while True:
-                            new_price = input("Ingrese el nuevo precio del producto: ")
-                            try:
-                                new_price = float(new_price)
-                                break  # Salir del bucle si se ingresa un numero valido
-                            except ValueError:
-                                print("Ingrese un numero valido para el precio")
-                        
-                        new_category = input("Ingrese la nueva categoría del producto: ")
-                        
-                        while True:
-                            new_quantity = input("Ingrese la nueva cantidad del producto: ")
-                            try:
-                                new_quantity = int(new_quantity)
-                                break  # Salir del bucle si se ingresa un numero valido
-                            except ValueError:
-                                print("Ingrese un numero valido para la cantidad")
-                        
-                        for producto in productos_encontrados:
-                            if gestion_productos.modificar_producto(producto.name, new_name, new_description, new_price, new_category, new_quantity):
-                                print("Producto modificado correctamente")
-                            else:
-                                print("No se pudo modificar el producto")
+                    new_name = input("Ingrese el nuevo nombre del producto: ")
+                    new_description = input("Ingrese la nueva descripción del producto: ")
+                    
+                    while True:
+                        new_price = input("Ingrese el nuevo precio del producto: ")
+                        try:
+                            new_price = float(new_price)
+                            break  # Salir del bucle si se ingresa un número válido
+                        except ValueError:
+                            print("Ingrese un número válido para el precio")
+                    
+                    new_category = input("Ingrese la nueva categoría del producto: ")
+                    
+                    while True:
+                        new_quantity = input("Ingrese la nueva cantidad del producto: ")
+                        try:
+                            new_quantity = int(new_quantity)
+                            break  # Salir del bucle si se ingresa un número válido
+                        except ValueError:
+                            print("Ingrese un numero valido para la cantidad")
+                    
+                    if gestion_productos.modificar_producto(nombre, new_name, new_description, new_price, new_category, new_quantity):
+                        print("Producto modificado correctamente")
                     else:
-                        print("No se encontro ningun producto con el nombre proporcionado")
+                        print("No se pudo modificar el producto")
+
 
                         
                 elif opcion_producto == "2.4":
                     nombre = input("Ingrese el nombre del producto a eliminar: ")
-                    productos_encontrados = gestion_productos.buscar_producto(name=nombre)
+                    productos_encontrados = gestion_productos.buscar_productos(nombre)
                     if productos_encontrados:
                         for producto in productos_encontrados:
                             if gestion_productos.eliminar_producto(producto.name):
@@ -208,7 +242,7 @@ def main():
                 
 
         
-        # REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR  
+        # Listo  
         
         elif opcion == "3":
 
@@ -216,12 +250,11 @@ def main():
                 print("\n=====Gestion de Ventas=====\n")
                 print("3.1 Registrar venta")
                 print("3.2 Buscar venta")
-                print("3.3 Generar Factura")
-                print("3.4 Volver")
+                print("3.3 Volver")
                 opcion_venta = input("\nSeleccione una opción: ")
 
                 # Validacion
-                while opcion_venta not in ["3.1", "3.2", "3.3", "3.4"]:
+                while opcion_venta not in ["3.1", "3.2", "3.3"]:
                     print("\nOpcion no valida\n\n=====Gestion de Ventas=====\n\n3.1 Registrar venta")
                     print("3.2 Buscar venta")
                     print("3.3 Generar Factura")
@@ -256,58 +289,37 @@ def main():
                         print("No se encontro ningun cliente con el documento proporcionado")
                         continue
             
-                # ARREGLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
+                # revisar
                 elif opcion_venta == "3.2":
                     # Opciones de búsqueda
                     print("Seleccione el criterio de búsqueda:")
                     print("3.2.1 Cliente")
                     print("3.2.2 Fecha")
                     print("3.2.3 Monto")
-                    opcion_busqueda = input("Ingrese la opción de bUsqueda: ")
+                    opcion_busqueda = input("Ingrese la opción de búsqueda: ")
 
                     if opcion_busqueda == "3.2.1":
                         # Búsqueda por cliente
-                        cliente_documento = input("Ingrese el documento del cliente a buscar: ")
-                        nombre_cliente = gestion_clientes.buscar_nombre_cliente_por_documento(cliente_documento)
-                        ventas_encontradas = gestion_ventas.buscar_ventas(cliente=cliente_documento)
+                        documento = input("Ingrese el documento del cliente a buscar: ")
+                        gestion_ventas.buscar_venta_por_documento(documento)
                     elif opcion_busqueda == "3.2.2":
                         # Búsqueda por fecha
-                        fecha = input("Ingrese la fecha de la venta a buscar (dd/mm/aaaa): ")
-                        ventas_encontradas = gestion_ventas.buscar_ventas(fecha=fecha)
+                        fecha_inicio = input("Ingrese la fecha de inicio del rango (dd/mm/aaaa): ")
+                        fecha_fin = input("Ingrese la fecha de fin del rango (dd/mm/aaaa): ")
+                        gestion_ventas.buscar_ventas_por_rango_fechas(fecha_inicio, fecha_fin)
+
                     elif opcion_busqueda == "3.2.3":
-                        # Búsqueda por rango de monto
-                        monto_min = float(input("Ingrese el monto mínimo del rango: "))
-                        monto_max = float(input("Ingrese el monto máximo del rango: "))
-                        ventas_encontradas = gestion_ventas.buscar_ventas(rango_monto=(monto_min, monto_max))
+                        # Búsqueda por monto
+                        monto_min = float(input("Ingrese el monto mínimo de la venta a buscar: "))
+                        monto_max = float(input("Ingrese el monto maximo de la venta a buscar: "))
+                        gestion_ventas.buscar_ventas_por_rango_montos(monto_min, monto_max)
+
                     else:
                         print("Opción invalida")
                         continue
 
-                    if len(ventas_encontradas) > 0:
-                        print("Ventas encontradas:")
-                        for venta_info in ventas_encontradas:
-                            venta = venta_info['venta']
-                            print(f"Cliente: {venta.cliente}, {venta.cliente.documento}")
-                            print("Productos:")
-                            for producto, cantidad in zip(venta.productos.split(','), venta.cantidad.split(',')):
-                                producto_objeto = gestion_productos.buscar_producto(name=producto.strip())
-                                if producto_objeto:
-                                    print(f"  - Nombre: {producto_objeto.name}")
-                                    print(f"    Descripción: {producto_objeto.description}")
-                                    print(f"    Precio: {producto_objeto.price}")
-                                    print(f"    Cantidad: {cantidad}")
-                            print(f"Monto total: {venta_info['total']}")
-                            print("------------------------")
-                    else:
-                        print("No se encontraron ventas que coincidan con los criterios de busqueda")
-
-
-                elif opcion_venta == "3.3":
-                    gestion_ventas.guardar_ventas()
-
-
                 # volver al menu
-                elif opcion_venta == "3.4":
+                elif opcion_venta == "3.3":
                     break
 
 
@@ -515,10 +527,12 @@ def main():
                 os.remove('clientes.json')
                 os.remove('envios.json')
                 os.remove('ventas.json')
+                os.remove('pagos.json')
                 gestion_productos.productos.clear()
                 gestion_clientes.clientes.clear()
                 gestion_envios.envios.clear()
                 gestion_ventas.ventas.clear()
+                gestion_pagos.pagos.clear()
                 gestion_productos.obtener_productos_api()
                 gestion_productos.guardar_productos_json()
 

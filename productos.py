@@ -38,16 +38,21 @@ class GestionProductos:
         with open("productos.json", 'w') as f:
             json.dump(productos_dict, f)
 
-    def buscar_producto(self, name=None, category=None):
+    def buscar_productos(self, nombre=None, categoria=None, precio_min=None, precio_max=None, disponibilidad=False):
         resultados = []
         for producto in self.productos:
-            if (name is None or producto.name == name) and (category is None or producto.category == category):
+            if (nombre is None or producto.name.lower() == nombre.lower()) and \
+                    (categoria is None or producto.category.lower() == categoria.lower()) and \
+                    (precio_min is None or producto.price >= precio_min) and \
+                    (precio_max is None or producto.price <= precio_max) and \
+                    (not disponibilidad or producto.quantity >= 1):
                 resultados.append(producto)
         return resultados
 
+
     def modificar_producto(self, name, new_name=None, new_description=None, new_price=None, new_category=None, new_quantity=None):
         for i, producto in enumerate(self.productos):
-            if producto.name == name:
+            if producto.name.lower() == name or producto.name == name :
                 if new_name is not None:
                     producto.name = new_name
                 if new_description is not None:
@@ -66,11 +71,12 @@ class GestionProductos:
 
     def eliminar_producto(self, name):
         for producto in self.productos:
-            if producto.name == name:
+            if producto.name.lower() == name.lower():
                 self.productos.remove(producto)
                 self.guardar_productos_json()
                 return True
         return False
+
     
     def cargar_productos_desde_json(self):
         if os.path.isfile('productos.json'):
@@ -86,7 +92,7 @@ class GestionProductos:
 
         for producto in productos:
             if producto['name'] == nombre_productos:
-                return int(producto['price'])  # Asegúrate de que el precio es un número entero
+                return int(producto['price'])  
 
         return None
     

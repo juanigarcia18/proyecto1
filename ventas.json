@@ -9,5 +9,16 @@
         "cliente_tipo": "juridico",
         "pago2": "s",
         "total": 273.59999999999997
+    },
+    {
+        "cliente": "30",
+        "productos": "Recycled Fresh Table",
+        "cantidad": "4",
+        "pago": "pm",
+        "envio": "delivery",
+        "fecha": "18/10/2022",
+        "cliente_tipo": "natural",
+        "pago2": "n",
+        "total": 148.48
     }
 ]

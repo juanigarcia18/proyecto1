@@ -6,5 +6,13 @@
         "correo": "juanimartin2001@hotmail.com",
         "direccion": "av macuto",
         "telefono": "04125512174"
+    },
+    {
+        "nombre": "andre scarcia",
+        "tipo_cliente": "natural",
+        "documento": "30",
+        "correo": "andrescarciag@hotmail.com",
+        "direccion": "calle piramide la miranda",
+        "telefono": "04143119766"
     }
 ]

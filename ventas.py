@@ -1,6 +1,8 @@
 from productos import GestionProductos
 from clientes import GestionClientes
 import json
+from datetime import datetime
+
 
 class Venta:
     IVA = 0.16
@@ -24,7 +26,7 @@ class GestionVentas:
         self.gestion_clientes = GestionClientes()
         self.cargar_ventas()
 
-    # Arreglar el print 
+    
     def guardar_ventas(self):
         ventas_guardar = [vars(venta['venta']) for venta in self.ventas]
         with open('ventas.json', 'w') as f:
@@ -92,7 +94,7 @@ class GestionVentas:
         })
 
         print("\nVenta registrada:\n")
-        print("Cliente:", nombre_cliente + ", documento:", cliente_documento)
+        print("Cliente:", cliente_documento)
         print("Productos:", productos)
         print("Cantidad:", cantidad)
         print("Pago:", pago)
@@ -117,17 +119,6 @@ class GestionVentas:
             'total': total
         }
 
-    # ARREGLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
-    def buscar_ventas(self, cliente=None, fecha=None, total=None):
-        ventas_encontradas = []
-        for venta in self.ventas:
-            venta_info = venta['venta']
-            if (cliente is None or venta_info.cliente == cliente) and \
-               (fecha is None or venta_info.fecha == fecha) and \
-               (total is None or venta['total'] == total):
-                ventas_encontradas.append(venta)
-
-        return ventas_encontradas
     
     def buscar_venta_por_cliente(self, cliente_documento):
         for venta in self.ventas:
@@ -141,3 +132,82 @@ class GestionVentas:
                 return venta['venta'].envio
 
         return None
+
+    def buscar_ventas(self, cliente=None, fecha=None, total=None):
+            ventas_encontradas = []
+            for venta in self.ventas:
+                venta_info = venta['venta']
+                if (cliente is None or venta_info.cliente == cliente) and \
+                (fecha is None or venta_info.fecha == fecha) and \
+                (total is None or venta['total'] == total):
+                    ventas_encontradas.append(venta)
+
+            return ventas_encontradas
+
+    def buscar_venta_por_documento(self, documento):
+        with open('ventas.json', 'r') as f:
+            ventas = json.load(f)
+
+        for venta in ventas:
+            if venta['cliente'] == documento:
+                print("\nVenta encontrada:\n")
+                print("Cliente:", venta['cliente'])
+                print("Productos:", venta['productos'])
+                print("Cantidad:", venta['cantidad'])
+                print("Pago:", venta['pago'])
+                print("Envío:", venta['envio'])
+                print("Total:", venta['total'])
+                return
+
+        print("No se encontró ninguna venta con ese documento.")
+
+        
+    def buscar_ventas_por_rango_fechas(self, fecha_inicio, fecha_fin):
+        with open('ventas.json', 'r') as f:
+            ventas = json.load(f)
+
+        ventas_encontradas = []
+        for venta in ventas:
+            fecha_venta = datetime.strptime(venta['fecha'], "%d/%m/%Y")
+            fecha_inicio_rango = datetime.strptime(fecha_inicio, "%d/%m/%Y")
+            fecha_fin_rango = datetime.strptime(fecha_fin, "%d/%m/%Y")
+
+            if fecha_inicio_rango <= fecha_venta <= fecha_fin_rango:
+                ventas_encontradas.append(venta)
+
+        if len(ventas_encontradas) > 0:
+            print("\nVentas encontradas:\n")
+            for venta in ventas_encontradas:
+                print("Venta encontrada:")
+                print("Cliente:", venta['cliente'])
+                print("Productos:", venta['productos'])
+                print("Cantidad:", venta['cantidad'])
+                print("Pago:", venta['pago'])
+                print("Envío:", venta['envio'])
+                print("Total:", venta['total'])
+        else:
+            print("No se encontraron ventas que coincidan con el rango de fechas especificado")
+
+
+    def buscar_ventas_por_rango_montos(self, monto_min, monto_max):
+        with open('ventas.json', 'r') as f:
+            ventas = json.load(f)
+
+        ventas_encontradas = []
+        for venta in ventas:
+            total_venta = venta['total']
+            if monto_min <= total_venta <= monto_max:
+                ventas_encontradas.append(venta)
+
+        if len(ventas_encontradas) > 0:
+            print("\nVentas encontradas:\n")
+            for venta in ventas_encontradas:
+                print("Venta encontrada:")
+                print("Cliente:", venta['cliente'])
+                print("Productos:", venta['productos'])
+                print("Cantidad:", venta['cantidad'])
+                print("Pago:", venta['pago'])
+                print("Envío:", venta['envio'])
+                print("Total:", venta['total'])
+        else:
+            print("No se encontraron ventas que coincidan con el rango de montos especificado")
