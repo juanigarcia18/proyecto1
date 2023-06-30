@@ -6,18 +6,19 @@ from envios import GestionEnvios
 from estadisticas import Estadisticas
 import os
 
+
 def main():
 
     gestion_productos = GestionProductos()
 
-    if os.path.isfile('productos.jason'):
+    if os.path.isfile('productos.json'):
         print("El archivo productos.json ya existe\n")
         
     else:
         gestion_productos.obtener_productos_api()
         gestion_productos.guardar_productos_json()
     
-    gestion_productos = GestionProductos()
+
     gestion_ventas = GestionVentas()
     gestion_clientes = GestionClientes()
     gestion_pagos = GestionPagos()
@@ -32,7 +33,8 @@ def main():
         print("4. Gestion de pagos")
         print("5. Gestion de envios")
         print("6. Estadisticas")
-        print("7. Salir")
+        print("7. Cargar condiciones iniciales")
+        print("8. Salir")
         opcion = input("\nSeleccione una opcion: ")
 
         # Listo 
@@ -139,10 +141,9 @@ def main():
                     category = input("Ingrese la categoría del producto: ")
                     quantity = int(input("Ingrese la cantidad del producto: "))
                     gestion_productos.agregar_producto(name, description, price, category, quantity)
-                    gestion_productos.guardar_productos_json()
                     print("Producto registrado correctamente")
 
-                    
+                # FALTA BUSCAR PRODUCTOS TAMBIEN POR CATEGORIA PRECIO DISPONIBILIDAD
                 elif opcion_producto == "2.2":
                     nombre = input("Ingrese el nombre del producto a buscar: ")
                     productos_encontrados = gestion_productos.buscar_producto(name=nombre)
@@ -150,7 +151,7 @@ def main():
                         for producto in productos_encontrados:
                             print(producto)
                     else:
-                        print("No se encontro ningun producto con el nombre proporcionado.")
+                        print("No se encontro ningun producto con el nombre proporcionado")
                         
                 elif opcion_producto == "2.3":
                     nombre = input("Ingrese el nombre del producto a modificar: ")
@@ -226,15 +227,17 @@ def main():
                 if opcion_venta == "3.1":
                     # Registrar venta
                     cliente = input("Ingrese el nombre del cliente: ")
-                    fecha = input("Ingrese la fehcha en formato dd/mm/aaaa: ")
+                    cliente_tipo = input("Ingrese si el cliente es natural o juridico: ").lower()
+                    fecha = input("Ingrese la fecha en formato dd/mm/aaaa: ")
                     productos = input("Ingrese el/los productos comprados separado por comas: ")
                     cantidad = input("Ingrese la cantidad: ")
                     print("metodos de pago disponibles: Zelle, Cash, PM, PdV")
-                    pago = input("Ingrese su metodo de pago: ") # Método de pago
+                    pago = input("Ingrese su metodo de pago: ").lower() # Método de pago
+                    pago2 = input("Ingrese si pago de contado (s/n)").lower()
                     print("metodos de envio disponibles: MRW, Zoom, Delivery")
                     envio = input("Ingrese su metodo de envio: ")  # Método de envío
 
-                    gestion_ventas.registrar_venta(cliente, productos, cantidad, pago, envio, fecha)
+                    gestion_ventas.registrar_venta(cliente, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2)
                     print("Venta registrada con exito")
             
             
@@ -336,20 +339,18 @@ def main():
                 elif opcion_pago == "4.3":
                     break
         
-        # REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
+        # Listo
         elif opcion == "5":
 
-            while True :
-
+            while True:
                 print("\n=====Gestion de Envios=====\n")
                 print("5.1 Registrar envio")
                 print("5.2 Buscar envio")
                 print("5.3 Volver")
-                opcion_envio = input("\nSeleccione una opcion: ")
+                opcion_envio = input("\nSeleccione una opción: ")
 
-                # Validacion
+                # Validación
                 while opcion_envio not in ["5.1", "5.2", "5.3"]:
-
                     print("\nOpcion no valida\n\n=====Gestion de Envios=====\n")
                     print("5.1 Registrar envio")
                     print("5.2 Buscar envio")
@@ -357,18 +358,57 @@ def main():
                     opcion_envio = input("\nSeleccione una opcion: ")
 
                 if opcion_envio == "5.1":
-                    cliente = input("Ingrese el nombre del cliente: ")
-                    # Aquí puedes agregar más campos para registrar un envío
-                    gestion_envios.registrar_envio(cliente)
-                elif opcion_envio == "5.2":
-                    cliente = input("Ingrese el nombre del cliente a buscar: ")
-                    envio = gestion_envios.buscar_envio(cliente)
-                    print(envio)
+                    cliente = input("Ingrese el nombre del cliente: ").lower()
+                    while not all(char.isalpha() or char.isspace() for char in cliente):
+                        cliente = input("Error\nIngrese el nombre del cliente: ").lower()
+                    order_compra = input("Ingrese el numero de orden de compra: ")
+                    while not order_compra.isnumeric() :
+                        order_compra = input("Error\nIngrese el numero de orden de compra: ")
+                    servicio = input("Ingrese el servicio de envio (MRW, Zoom, Delivery) : ").lower()
+                    while not servicio in ["mrw", "zoom", "delivery"] :
+                        servicio = input("Error\nIngrese el servicio de envio (MRW, Zoom, Delivery) : ").lower()
+                    if servicio.lower() == "delivery" :
+                        motorizado = input("Ingrese los datos del motorizado (nombre,telefono) :")
+                    
+                    direccion = input("Ingrese su direccion: ")
+                    costo = float(input("Ingrese el costo del servicio: "))
+                    fecha = input("Ingrese la fecha del envio (dd/mm/aaaa): ")
 
-                # volver al menu
+                    gestion_envios.registrar_envio(cliente, order_compra, servicio, costo, direccion, motorizado, fecha)
+                    print("Envio registrado exitosamente")
+
+                elif opcion_envio == "5.2":
+                    opcion_envio2 = input("\n5.2.1 Buscar por cliente\n5.2.2 Buscar por fecha\nSeleccione una opcion: ")
+
+                    while opcion_envio2 not in ["5.2.1", "5.2.2"]:
+                        opcion_envio2 = input("\nOpcion invalida.\n\n5.2.1 Buscar por cliente\n5.2.2 Buscar por fecha\nSeleccione una opcion valida: ")
+
+                    if opcion_envio2 == "5.2.1":
+                        cliente = input("Ingrese el nombre del cliente a buscar: ")
+                        envios = gestion_envios.buscar_envios(cliente)
+
+                        if envios:
+                            print("Envios encontrados:")
+                            for envio in envios:
+                                print(envio)
+                        else:
+                            print("No se encontraron envios")
+
+                    elif opcion_envio2 == "5.2.2":
+                        fecha = input("Ingrese la fecha (dd/mm/aaaa) a buscar: ")
+                        envios = gestion_envios.buscar_envios(fecha=fecha)
+
+                        if envios:
+                            print("Envios encontrados:")
+                            for envio in envios:
+                                print(envio)
+                        else:
+                            print("No se encontraron envios")
+
+
+                # Volver al menu
                 elif opcion_envio == "5.3":
                     break
-        
 
         
         # REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
@@ -402,12 +442,25 @@ def main():
                 # volver al menu
                 elif opcion_informe == "6.4":
                     break
-                
-            
         
+        
+        # TERMINAR DE AGREGAR LO DEMAS
         elif opcion == "7":
-                break
+            if os.path.isfile('productos.json'):
+                os.remove('productos.json')
+                os.remove('clientes.txt')
+                os.remove('envios.json')
+                gestion_productos.productos.clear()
+                gestion_envios.envios.clear()
+                gestion_productos.obtener_productos_api()
+                gestion_productos.guardar_productos_json()
+
+        elif opcion == "8":
+            break    
+
+
         else:
+            
             print("\nOpcion no valida. Por favor, intente de nuevo.")
 
 if __name__ == "__main__":

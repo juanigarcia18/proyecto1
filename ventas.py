@@ -1,44 +1,83 @@
+from productos import GestionProductos
+
+
 class Venta:
-    iva = 0.16
-    igtf = 0.03
-    def __init__(self, cliente, productos, cantidad, pago, envio, fecha):
+    IVA = 0.16
+    IGTF = 0.03
+    def __init__(self, cliente, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2):
         self.cliente = cliente
         self.productos = productos
         self.cantidad = cantidad
         self.pago = pago
         self.envio = envio
         self.fecha = fecha
+        self.cliente_tipo = cliente_tipo
+        self.pago2 = pago2
 
 class GestionVentas:
     def __init__(self):
         self.ventas = []
+        self.gestion_productos = GestionProductos()
 
     # REVISAR ESTOOOOOO NO PONER ID y no se si esto hace falta
     def guardar_ventas_txt(self):
         with open('ventas.txt', 'w') as f:
             for venta in self.ventas:
                 f.write(f'{venta.id},{venta.cliente.id},{[producto.id for producto in venta.productos]}\n')
-                
-    def registrar_venta(self, cliente, productos, cantidad, pago, envio, fecha):
-        venta = Venta(cliente, productos, cantidad, pago, envio)
-        subtotal = sum(producto.price * cantidad for producto, cantidad in zip(self.productos, self.cantidad))
-        descuento = subtotal * 0.05 if self.cliente.tipo == 'juridico' and self.pago == 'contado' else 0
-        iva = subtotal * self.IVA
-        igtf = subtotal * self.IGTF if self.pago == 'Zelle' or 'Cash' else 0
-        total = subtotal - descuento + iva + igtf        
-        self.ventas.append(venta, subtotal, descuento, iva, igtf, total, fecha, total)
+                        
+    def registrar_venta(self, cliente, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2):
+        venta = Venta(cliente, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2)
+        nombres_productos = productos.split(',')
+        subtotal = 0
+        for nombre_producto in nombres_productos:
+            producto_objeto = self.gestion_productos.buscar_producto(name=nombre_producto.strip())
+            if producto_objeto:
+                precio_producto = self.gestion_productos.obtener_precio_producto(nombre_producto)
+                if precio_producto is not None:
+                    subtotal += int(precio_producto) * int(cantidad)
+
+        descuento = subtotal * 0.05 if cliente_tipo == 'juridico' and pago2 == 's' else 0
+        iva = subtotal * 0.16
+        igtf = subtotal * 0.03 if pago in ['zelle', 'cash'] else 0
+        total = subtotal - descuento + iva + igtf
+        self.ventas.append({
+            'venta': venta,
+            'subtotal': subtotal,
+            'descuento': descuento,
+            'iva': iva,
+            'igtf': igtf,
+            'total': total,
+            'fecha': fecha
+        })
+
+        print("Venta registrada:")
+        print("Cliente:", cliente)
+        print("Productos:", productos)
+        print("Cantidad:", cantidad)
+        print("Pago:", pago)
+        print("Envío:", envio)
+        print("Subtotal:", subtotal)
+        print("Descuento:", descuento)
+        print("IVA:", iva)
+        print("IGTF:", igtf)
+        print("Total:", total)
+
         return {
-            'cliente' : cliente,
-            'productos' : productos,
-            'cantidad' : cantidad,
-            'pago' : pago,
-            'envio' : envio,
+            'cliente': cliente,
+            'productos': productos,
+            'cantidad': cantidad,
+            'pago': pago,
+            'envio': envio,
             'subtotal': subtotal,
             'descuento': descuento,
             'iva': iva,
             'igtf': igtf,
             'total': total
         }
+
+
+
+    # QUITAR
     def get_monto_total(self):
         total = 0
         for producto, cantidad in zip(self.productos, self.cantidad):

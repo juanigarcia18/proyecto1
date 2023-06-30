@@ -58,7 +58,7 @@ class GestionProductos:
                     producto.category = new_category
                 if new_quantity is not None:
                     producto.quantity = new_quantity
-                self.productos.pop(i)  # Eliminar el producto de la posición original
+                self.productos.pop(i)  # Eliminar el producto de la posicion original
                 self.productos.insert(i, producto)  # Insertar el producto modificado en la misma posición
                 self.guardar_productos_json()
                 return True
@@ -78,4 +78,15 @@ class GestionProductos:
                 productos_dict = json.load(f)
                 for producto in productos_dict:
                     self.agregar_producto(producto['name'], producto['description'], producto['price'], producto['category'], producto['quantity'])
-                    
+
+
+    def obtener_precio_producto(self, nombre_productos):
+        with open('productos.json', 'r') as f:
+            productos = json.load(f)
+
+        for producto in productos:
+            if producto['name'] == nombre_productos:
+                return int(producto['price'])  # Asegúrate de que el precio es un número entero
+
+        return None
+    
