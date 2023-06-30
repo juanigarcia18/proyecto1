@@ -29,12 +29,10 @@ class GestionPagos:
                 (moneda is None or pago.moneda == moneda):
                 resultados.append(pago)
         return resultados
-    def registrar_pago(self, cliente, monto, moneda, tipo, fecha):
-        pago = Pago(cliente, monto, moneda, tipo, fecha)
-        self.pagos.append(pago)
+
     
     def guardar_pagos_json(self):
         pagos_dict = [vars(pago) for pago in self.pagos]
-        with open("envios.json", 'w') as f:
+        with open("pagos.json", 'w') as f:
             json.dump(pagos_dict, f)
 

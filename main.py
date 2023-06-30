@@ -358,7 +358,7 @@ def main():
                         opcion2 = input("\n4.2.1 Buscar por cliente\n4.2.2 Buscar por fecha\n4.2.3 Buscar por tipo de pago\n4.2.4 Buscar por moneda de pago\nSeleccione una opcion valida: ")
 
                     if opcion2 == "4.2.1":
-                        cliente_nombre = input("Ingrese el nombre del cliente: ")
+                        cliente_nombre = input("Ingrese el documento del cliente: ")
                         pagos_encontrados = gestion_pagos.buscar_pago(cliente=cliente_nombre)
                         if pagos_encontrados:
                             for pago in pagos_encontrados:
