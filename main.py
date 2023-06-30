@@ -230,7 +230,8 @@ def main():
                     cliente_tipo = input("Ingrese si el cliente es natural o juridico: ").lower()
                     fecha = input("Ingrese la fecha en formato dd/mm/aaaa: ")
                     productos = input("Ingrese el/los productos comprados separado por comas: ")
-                    cantidad = input("Ingrese la cantidad: ")
+                    # REVISAR
+                    cantidad = input("Ingrese la cantidad de cada uno separado por comas: ")
                     print("metodos de pago disponibles: Zelle, Cash, PM, PdV")
                     pago = input("Ingrese su metodo de pago: ").lower() # Método de pago
                     pago2 = input("Ingrese si pago de contado (s/n)").lower()
@@ -240,7 +241,7 @@ def main():
                     gestion_ventas.registrar_venta(cliente, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2)
                     print("Venta registrada con exito")
             
-            
+                # ARREGLAR
                 elif opcion_venta == "3.2":
                     # Buscar venta
                     cliente = input("Ingrese el nombre del cliente a buscar: ")

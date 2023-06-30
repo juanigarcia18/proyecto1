@@ -75,16 +75,6 @@ class GestionVentas:
             'total': total
         }
 
-
-
-    # QUITAR
-    def get_monto_total(self):
-        total = 0
-        for producto, cantidad in zip(self.productos, self.cantidad):
-            total += producto.price * cantidad
-        return total
-    
-
     # ARREGLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
     def buscar_ventas(self, cliente=None, productos=None, cantidad=None, pago=None, envio=None):
         ventas_encontradas = []
@@ -98,4 +88,4 @@ class GestionVentas:
         return ventas_encontradas
     
    
-    # FALTA GENERAR FACTURAS
+    # FALTA GENERAR FACTURAS EN TXT O JSON
