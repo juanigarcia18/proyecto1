@@ -3,16 +3,16 @@
         "nombre": "juan garcia",
         "tipo_cliente": "juridico",
         "documento": "28301254",
-        "correo": "juanimartin2001@hotmail.com",
-        "direccion": "av macuto",
+        "correo": "juanimartin",
+        "direccion": "av mavuto",
         "telefono": "04125512174"
     },
     {
         "nombre": "andre scarcia",
         "tipo_cliente": "natural",
         "documento": "30",
-        "correo": "andrescarciag@hotmail.com",
-        "direccion": "calle piramide la miranda",
+        "correo": "andre",
+        "direccion": "calle piramide",
         "telefono": "04143119766"
     }
 ]

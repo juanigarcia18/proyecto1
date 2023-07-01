@@ -25,7 +25,7 @@ def main():
     gestion_clientes = GestionClientes()
     gestion_pagos = GestionPagos()
     gestion_envios = GestionEnvios()
-    estadisticas = Estadisticas(gestion_ventas.ventas, gestion_pagos.pagos, gestion_envios.envios)
+
 
     while True:
         print("\n=====Bienvenido=====\n")
@@ -34,7 +34,8 @@ def main():
         print("3. Gestion de ventas")
         print("4. Gestion de pagos")
         print("5. Gestion de envios")
-        print("6. Estadisticas")
+        if os.path.exists('ventas.json') and os.path.exists('pagos.json') and os.path.exists('envios.json'):
+            print("6. Estadisticas")
         print("7. Cargar condiciones iniciales")
         print("8. Salir")
         opcion = input("\nSeleccione una opcion: ")
@@ -73,6 +74,8 @@ def main():
                     correo = input("Ingrese su correo: ")
                     direccion = input("Ingrese su direccion de envio:")
                     telefono = input("Ingrese su numero de telefono: ")
+                    while not telefono.isnumeric() :
+                        telefono = input("\nError\nIngrese su numero de telefono: ")
 
                     gestion_clientes.agregar_cliente(nombre, tipo_cliente, documento, correo, direccion, telefono)
 
@@ -100,7 +103,7 @@ def main():
                         else:
                             print("No se encontro ningun cliente con el correo proporcionado")
                 
-                # Imprimir lista de clientes en un txt
+                # Imprimir lista de clientes en un json
                 elif opcion_cliente == "1.3":
                     
                     gestion_clientes.guardar_clientes()
@@ -279,7 +282,7 @@ def main():
                         pago2 = input("Ingrese si pagó de contado (s/n): ").lower()
                         print("Métodos de envío disponibles: MRW, Zoom, Delivery")
                         envio = input("Ingrese su método de envío: ")
-                        
+
                         subtotal = gestion_ventas.calcular_subtotal(productos, cantidad, pago, cliente_tipo, pago2)
                         total = gestion_ventas.calcular_total(pago, cliente_tipo, pago2, subtotal)
                         gestion_ventas.registrar_venta(cliente_documento, productos, cantidad, pago, envio, fecha, cliente_tipo, pago2, total, subtotal)
@@ -288,7 +291,6 @@ def main():
                     else:
                         print("No se encontro ningun cliente con el documento proporcionado")
                         continue
-            
                 # revisar
                 elif opcion_venta == "3.2":
                     # Opciones de búsqueda
@@ -437,7 +439,7 @@ def main():
                     
                     direccion = gestion_clientes.buscar_direccion_por_documento(cliente_documento)
 
-                    order_compra = str(random.randint(1000, 9999))
+                    order_compra = str(random.randint(1, 9999))
                     servicio = gestion_ventas.buscar_envio_por_documento(cliente_documento)
 
                     if servicio == "delivery":
@@ -446,7 +448,7 @@ def main():
                         motorizado = None
 
                     costo = float(5 * random.randint(1, 4))
-                    # REVISAR
+                    
                     fecha = input("Ingrese la fecha del envío (dd/mm/aaaa): ")
 
                     gestion_envios.registrar_envio(cliente, order_compra, servicio, costo, direccion, motorizado, fecha)
@@ -488,7 +490,15 @@ def main():
 
         
         # REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
-        elif opcion == "6":
+        elif opcion == "6" :
+
+        
+            ventas = GestionVentas()
+            pagos = GestionPagos()
+            envios = GestionEnvios()
+
+            
+            estadisticas = Estadisticas(ventas.ventas, pagos.pagos, envios.envios)
 
             while True :
                 print("\n=====Estadisticas=====\n")
@@ -507,34 +517,56 @@ def main():
                     print("6.4 Volver")
                     opcion_informe = input("\nSeleccione una opcion: ")
 
-
                 if opcion_informe == "6.1":
-                    estadisticas.generar_informe_ventas()
+                    # Generate the sales report
+                    ventas_por_fecha, productos_mas_vendidos, clientes_frecuentes = estadisticas.generar_informe_ventas()
+
+                    # Print the sales report
+                    print('Ventas por fecha:', ventas_por_fecha)
+                    print('Productos más vendidos:', productos_mas_vendidos)
+                    print('Clientes frecuentes:', clientes_frecuentes)
+
                 elif opcion_informe == "6.2":
-                    estadisticas.generar_informe_pagos()
+                    # Generate the payments report
+                    pagos_por_fecha, clientes_con_pagos_pendientes = estadisticas.generar_informe_pagos()
+
+                    # Print the payments report
+                    print('Pagos por fecha:', pagos_por_fecha)
+                    print('Clientes con pagos pendientes:', clientes_con_pagos_pendientes)
+
                 elif opcion_informe == "6.3":
-                    estadisticas.generar_informe_envios()
-                
+                    # Generate the shipments report
+                    envios_por_fecha, productos_mas_enviados, clientes_con_envios_pendientes = estadisticas.generar_informe_envios()
+
+                    # Print the shipments report
+                    print('Envíos por fecha:', envios_por_fecha)
+                    print('Productos más enviados:', productos_mas_enviados)
+                    print('Clientes con envíos pendientes:', clientes_con_envios_pendientes)
+
                 # volver al menu
                 elif opcion_informe == "6.4":
                     break
         
         
-        # TERMINAR DE AGREGAR LO DEMAS
+        # Listo
         elif opcion == "7":
             if os.path.isfile('productos.json'):
                 os.remove('productos.json')
-                os.remove('clientes.json')
-                os.remove('envios.json')
-                os.remove('ventas.json')
-                os.remove('pagos.json')
                 gestion_productos.productos.clear()
+            if os.path.isfile('clientes.json'):
+                os.remove('clientes.json')
                 gestion_clientes.clientes.clear()
+            if os.path.isfile('envios.json'):
+                os.remove('envios.json')
                 gestion_envios.envios.clear()
+            if os.path.isfile('ventas.json'):
+                os.remove('ventas.json')
                 gestion_ventas.ventas.clear()
+            if os.path.isfile('pagos.json'):
+                os.remove('pagos.json')
                 gestion_pagos.pagos.clear()
-                gestion_productos.obtener_productos_api()
-                gestion_productos.guardar_productos_json()
+            gestion_productos.obtener_productos_api()
+            gestion_productos.guardar_productos_json()
 
         elif opcion == "8":
             break    
@@ -542,7 +574,7 @@ def main():
 
         else:
             
-            print("\nOpcion no valida. Por favor, intente de nuevo.")
+            print("\nOpcion no valida. Por favor, intente de nuevo")
 
 if __name__ == "__main__":
     main()

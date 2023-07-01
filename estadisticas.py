@@ -1,17 +1,45 @@
+from collections import Counter
+from datetime import datetime
+
 class Estadisticas:
-    def __init__(self, ventas, pagos, envios):
+    def _init_(self, ventas, pagos, envios):
         self.ventas = ventas
         self.pagos = pagos
         self.envios = envios
 
-    def generar_informe_ventas(self, inicio, fin):
-        ventas_periodo = [venta for venta in self.ventas if inicio <= venta.fecha <= fin]
-        return len(ventas_periodo)
+    def generar_informe_ventas(self):
+         
+        ventas_por_fecha = Counter([datetime.strptime(venta['fecha'], '%d/%m/%Y') for venta in self.ventas])
 
-    def generar_informe_pagos(self, inicio, fin):
-        pagos_periodo = [pago for pago in self.pagos if inicio <= pago.fecha <= fin]
-        return len(pagos_periodo)
+        
+        productos_mas_vendidos = Counter([producto for venta in self.ventas for producto in venta['productos']])
 
-    def generar_informe_envios(self, inicio, fin):
-        envios_periodo = [envio for envio in self.envios if inicio <= envio.fecha <= fin]
-        return len(envios_periodo)
+        
+        clientes_frecuentes = Counter([venta['cliente'] for venta in self.ventas])
+
+        return ventas_por_fecha, productos_mas_vendidos, clientes_frecuentes
+
+    def generar_informe_pagos(self):
+        
+        pagos_por_fecha = Counter([datetime.strptime(pago['fecha'], '%d/%m/%Y') for pago in self.pagos])
+
+        
+        ventas_por_cliente = Counter({venta['cliente']: venta['total'] for venta in self.ventas})
+        pagos_por_cliente = Counter({pago['cliente']: pago['monto'] for pago in self.pagos})
+        clientes_con_pagos_pendientes = {cliente: ventas_por_cliente[cliente] - pagos_por_cliente[cliente] for cliente in ventas_por_cliente if ventas_por_cliente[cliente] > pagos_por_cliente[cliente]}
+
+        return pagos_por_fecha, clientes_con_pagos_pendientes
+
+    def generar_informe_envios(self):
+        
+        envios_por_fecha = Counter([datetime.strptime(envio['fecha'], '%d/%m/%Y') for envio in self.envios])
+
+        
+        productos_mas_enviados = Counter([producto for envio in self.envios for producto in envio['order_compra']['productos']])
+
+      
+        ventas_por_cliente = Counter([venta['cliente'] for venta in self.ventas])
+        envios_por_cliente = Counter([envio['cliente'] for envio in self.envios])
+        clientes_con_envios_pendientes = {cliente: ventas_por_cliente[cliente] - envios_por_cliente[cliente] for cliente in ventas_por_cliente if ventas_por_cliente[cliente] > envios_por_cliente[cliente]}
+
+        return envios_por_fecha, productos_mas_enviados, clientes_con_envios_pendientes

@@ -38,6 +38,17 @@ class GestionProductos:
         with open("productos.json", 'w') as f:
             json.dump(productos_dict, f)
 
+    # def buscar_productos(self, nombre=None, categoria=None, precio_min=None, precio_max=None, disponibilidad=False):
+    #     resultados = []
+    #     for producto in self.productos:
+    #         if (nombre is None or producto.name.lower() == nombre.lower()) and \
+    #                 (categoria is None or producto.category.lower() == categoria.lower()) and \
+    #                 (precio_min is None or producto.price >= precio_min) and \
+    #                 (precio_max is None or producto.price <= precio_max) and \
+    #                 (not disponibilidad or producto.quantity >= 1):
+    #             resultados.append(producto)
+    #     return resultados
+    
     def buscar_productos(self, nombre=None, categoria=None, precio_min=None, precio_max=None, disponibilidad=False):
         resultados = []
         for producto in self.productos:
@@ -91,8 +102,7 @@ class GestionProductos:
             productos = json.load(f)
 
         for producto in productos:
-            if producto['name'] == nombre_productos:
-                return int(producto['price'])  
+            if producto['name'].lower() == nombre_productos.lower():  # Convert both to lowercase
+                return int(producto['price'])
 
         return None
-    

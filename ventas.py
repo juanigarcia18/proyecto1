@@ -41,21 +41,22 @@ class GestionVentas:
             self.ventas = []
 
     def calcular_subtotal(self, productos, cantidad, pago, cliente_tipo, pago2):
-        nombres_productos = productos.split(',')
-        subtotal = 0
-        for nombre_producto in nombres_productos:
-            producto_objeto = self.gestion_productos.buscar_producto(name=nombre_producto.strip())
-            if producto_objeto:
-                precio_producto = self.gestion_productos.obtener_precio_producto(nombre_producto)
-                if precio_producto is not None:
-                    subtotal += int(precio_producto) * int(cantidad)
+            nombres_productos = productos.lower().split(',')  # Convert input to lowercase
+            cantidades = list(map(int, cantidad.split(',')))  # Convert quantities to integers
+            subtotal = 0
+            for nombre_producto, cantidad in zip(nombres_productos, cantidades):
+                producto_objeto = self.gestion_productos.buscar_productos(nombre=nombre_producto.strip())
+                if producto_objeto:
+                    precio_producto = self.gestion_productos.obtener_precio_producto(nombre_producto)
+                    if precio_producto is not None:
+                        subtotal += int(precio_producto) * cantidad  # Use the quantity from the list
 
-        descuento = subtotal * 0.05 if cliente_tipo == 'juridico' and pago2 == 's' else 0
-        iva = subtotal * 0.16
-        igtf = subtotal * 0.03 if pago in ['zelle', 'cash'] else 0
-        total = subtotal - descuento + iva + igtf
+            descuento = subtotal * 0.05 if cliente_tipo == 'juridico' and pago2 == 's' else 0
+            iva = subtotal * 0.16
+            igtf = subtotal * 0.03 if pago in ['zelle', 'cash'] else 0
+            total = subtotal - descuento + iva + igtf
 
-        return subtotal
+            return subtotal
 
 
 

@@ -1,24 +1,101 @@
 [
     {
+        "cliente": "30",
+        "productos": "luxurious metal table",
+        "cantidad": "4",
+        "pago": "zelle",
+        "envio": "mrw",
+        "fecha": "10/10/2010",
+        "cliente_tipo": "natural",
+        "pago2": "s",
+        "total": 0.0
+    },
+    {
         "cliente": "28301254",
-        "productos": "Luxurious Metal Table",
-        "cantidad": "6",
-        "pago": "cash",
-        "envio": "zoom",
-        "fecha": "10/10/2015",
+        "productos": "luxurious metal table",
+        "cantidad": "3",
+        "pago": "zelle",
+        "envio": "mrw",
+        "fecha": "10/10/2102",
         "cliente_tipo": "juridico",
         "pago2": "s",
-        "total": 273.59999999999997
+        "total": 0.0
+    },
+    {
+        "cliente": "28301254",
+        "productos": "luxurious metal table",
+        "cantidad": "4",
+        "pago": "zelle",
+        "envio": "mrw",
+        "fecha": "10/12/2010",
+        "cliente_tipo": "juridico",
+        "pago2": "s",
+        "total": 0.0
+    },
+    {
+        "cliente": "28301254",
+        "productos": "luxurious metal table",
+        "cantidad": "4",
+        "pago": "zelle",
+        "envio": "mrw",
+        "fecha": "10/10/2010",
+        "cliente_tipo": "juridico",
+        "pago2": "s",
+        "total": 0.0
+    },
+    {
+        "cliente": "28301254",
+        "productos": "luxurious metal table",
+        "cantidad": "4",
+        "pago": "zelle",
+        "envio": "mrw",
+        "fecha": "10/12/2010",
+        "cliente_tipo": "juridico",
+        "pago2": "s",
+        "total": 0.0
+    },
+    {
+        "cliente": "28301254",
+        "productos": "luxurious metal table",
+        "cantidad": "4",
+        "pago": "zelle",
+        "envio": "mrw",
+        "fecha": "10/10/1000",
+        "cliente_tipo": "juridico",
+        "pago2": "s",
+        "total": 0.0
+    },
+    {
+        "cliente": "28301254",
+        "productos": "Luxurious Metal Table",
+        "cantidad": "4",
+        "pago": "zelle",
+        "envio": "mrw",
+        "fecha": "10/10/2010",
+        "cliente_tipo": "juridico",
+        "pago2": "s",
+        "total": 182.4
     },
     {
         "cliente": "30",
-        "productos": "Recycled Fresh Table",
-        "cantidad": "4",
-        "pago": "pm",
-        "envio": "delivery",
-        "fecha": "18/10/2022",
+        "productos": "luxurious metal table",
+        "cantidad": "3",
+        "pago": "zelle",
+        "envio": "mrw",
+        "fecha": "18/08/2023",
         "cliente_tipo": "natural",
-        "pago2": "n",
-        "total": 148.48
+        "pago2": "s",
+        "total": 0.0
+    },
+    {
+        "cliente": "28301254",
+        "productos": "luxurious metal table",
+        "cantidad": "4",
+        "pago": "zelle",
+        "envio": "zoom",
+        "fecha": "10/08/2021",
+        "cliente_tipo": "juridico",
+        "pago2": "s",
+        "total": 182.4
     }
 ]
