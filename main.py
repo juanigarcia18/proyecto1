@@ -148,7 +148,7 @@ def main():
                     gestion_productos.agregar_producto(name, description, price, category, quantity)
                     print("Producto registrado correctamente")
 
-                # FALTA BUSCAR PRODUCTOS TAMBIEN POR CATEGORIA PRECIO DISPONIBILIDAD
+                
                 elif opcion_producto == "2.2":
                     # Opciones de búsqueda
                     print("Seleccione el criterio de búsqueda:")
@@ -489,7 +489,7 @@ def main():
                     break
 
         
-        # REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
+        # Listo
         elif opcion == "6" :
 
         
@@ -518,30 +518,31 @@ def main():
                     opcion_informe = input("\nSeleccione una opcion: ")
 
                 if opcion_informe == "6.1":
-                    # Generate the sales report
-                    ventas_por_fecha, productos_mas_vendidos, clientes_frecuentes = estadisticas.generar_informe_ventas()
-
-                    # Print the sales report
-                    print('Ventas por fecha:', ventas_por_fecha)
-                    print('Productos más vendidos:', productos_mas_vendidos)
+                    
+                    clientes_frecuentes = estadisticas.generar_informe_ventas()
+                    productos_mas_vendido = estadisticas.producto_mas_enviado()
+                    gestion_ventas = GestionVentas()
+                    estadisticas.total_ventas_por_ano()
+                    estadisticas.total_ventas_por_mes()
+                    estadisticas.total_ventas_por_dia()
+                    print('Productos más vendidos:', productos_mas_vendido)
                     print('Clientes frecuentes:', clientes_frecuentes)
 
                 elif opcion_informe == "6.2":
-                    # Generate the payments report
-                    pagos_por_fecha, clientes_con_pagos_pendientes = estadisticas.generar_informe_pagos()
-
-                    # Print the payments report
-                    print('Pagos por fecha:', pagos_por_fecha)
+                    
+                    clientes_con_pagos_pendientes = estadisticas.generar_informe_pagos()
+                    estadisticas.total_pagos_por_ano()
+                    estadisticas.total_pagos_por_mes()
+                    estadisticas.total_pagos_por_dia()
                     print('Clientes con pagos pendientes:', clientes_con_pagos_pendientes)
 
                 elif opcion_informe == "6.3":
-                    # Generate the shipments report
-                    envios_por_fecha, productos_mas_enviados, clientes_con_envios_pendientes = estadisticas.generar_informe_envios()
-
-                    # Print the shipments report
-                    print('Envíos por fecha:', envios_por_fecha)
-                    print('Productos más enviados:', productos_mas_enviados)
-                    print('Clientes con envíos pendientes:', clientes_con_envios_pendientes)
+                    gestion_ventas = GestionVentas()
+                    productos_mas_enviado = estadisticas.producto_mas_enviado()
+                    estadisticas.total_envios_por_ano()
+                    estadisticas.total_envios_por_mes()
+                    estadisticas.total_envios_por_dia()
+                    print('Producto(s) más enviado:', productos_mas_enviado)
 
                 # volver al menu
                 elif opcion_informe == "6.4":
